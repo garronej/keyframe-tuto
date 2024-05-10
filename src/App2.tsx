@@ -2,7 +2,10 @@
 import { tss, GlobalStyles, keyframes } from "tss-react";
 import { useState } from "react";
 
-export function App() {
+// This is a translation of this codepen:
+// https://codepen.io/CreativeCoder111/pen/XWyjBab
+
+export default function App() {
 
     const { classes } = useStyles();
 
@@ -56,11 +59,11 @@ export function App() {
             />
             <div className={classes.container}>
 
-                <div className={classes.slide}>
+                <div className={classes.slide + " slide"} >
                     {items.map(({ img, des, name }) => (
                         <div
                             key={name}
-                            className={classes.item}
+                            className={classes.item + " item"}
                             style={{ "backgroundImage": `url(${img})` }}
                         >
                             <div className={classes.content}>
@@ -76,9 +79,10 @@ export function App() {
                 <div className={classes.button}>
                     <button
                         onClick={() => {
-                            const lastItem = items[items.length - 1];
-                            const otherItems = items.slice(0, items.length - 1);
-                            setItems([lastItem, ...otherItems]);
+                            //const [lastItem, ...otherItemsReversed] = [...items].reverse();
+                            //setItems([lastItem, ...otherItemsReversed.reverse()]);
+                            const items = document.querySelectorAll('.item')
+                            document.querySelector('.slide')!.prepend(items[items.length - 1]) // here the length of items = 6
                         }}
                     >
                         <i className="fa-solid fa-arrow-left" />
