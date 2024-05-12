@@ -9,10 +9,11 @@ export type ItemData = {
 export function Item(props: {
     className?: string;
     itemData: ItemData;
+    position: number;
 }) {
-    const { className, itemData } = props;
+    const { className, itemData, position } = props;
 
-    const { classes, cx } = useStyles();
+    const { classes, cx } = useStyles({ position });
 
     return (
         <div
@@ -44,8 +45,9 @@ const animate = keyframes({
 
 const useStyles = tss
     .withName({ Item })
+    .withParams<{ position: number }>()
     .withNestedSelectors<"content">()
-    .create(({ classes }) => ({
+    .create(({ classes, position }) => ({
         "item": {
             "width": "200px",
             "height": "300px",
@@ -57,33 +59,42 @@ const useStyles = tss
             "backgroundPosition": "50% 50%",
             "backgroundSize": "cover",
             "display": "inline-block",
-            "transition": "0.5s",
-            "&:nth-child(1), &:nth-child(2)": {
-                "top": 0,
-                "left": 0,
-                "transform": "translate(0, 0)",
-                "borderRadius": 0,
-                "width": "100%",
-                "height": "100%",
-            },
-            "&:nth-child(3)": {
-                "left": "50%",
-            },
-            "&:nth-child(4)": {
-                "left": "calc(50% + 220px)",
-            },
-            "&:nth-child(5)": {
-                "left": "calc(50% + 440px)",
-            },
-            "&:nth-child(n + 6)": {
-                "left": "calc(50% + 660px)",
-                "opacity": 0,
-            },
+            "transition": "0.4s",
+            ...(() => {
 
-            [`&:nth-child(2) .${classes.content}`]: {
-                "display": "block"
-            }
+                const oneAndTwo = {
+                    "top": 0,
+                    "left": 0,
+                    "transform": "translate(0, 0)",
+                    "borderRadius": 0,
+                    "width": "100%",
+                    "height": "100%",
+                } as const;
 
+                switch (position) {
+                    case 1: return oneAndTwo;
+                    case 2: return {
+                        ...oneAndTwo,
+                        [`& .${classes.content}`]: {
+                            "display": "block"
+                        }
+                    };
+                    case 3: return {
+                        "left": "50%",
+                    };
+                    case 4: return {
+                        "left": "calc(50% + 220px)",
+                    };
+                    case 5: return {
+                        "left": "calc(50% + 440px)",
+                    };
+                    default: return {
+                        "left": "calc(50% + 660px)",
+                        "opacity": 0,
+                    };
+                }
+
+            })(),
         },
         "content": {
             "position": "absolute",
